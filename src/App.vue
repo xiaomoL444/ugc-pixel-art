@@ -27,35 +27,34 @@
           <!-- 像素画 canvas -->
           预览：
           <div style="overflow-y: auto;height: 16rem;">
-            <canvas
-              :style="{  height: 15.5 * pixelHeight / pixelWidth + 'rem', width: '15.5rem' }"
-              ref="canvas" :width="pixelWidth" :height="pixelHeight"></canvas>
+            <canvas :style="{ height: 15.5 * pixelHeight / pixelWidth + 'rem', width: '15.5rem' }" ref="canvas"
+              :width="pixelWidth" :height="pixelHeight"></canvas>
           </div>
 
           <button class="selectBtn" @click="selectFile">选择文件</button>
 
           <div class="ElementBox">
             <div class="ElementBoxTitle">高度</div>
-            <div class="ElementContent"><input class="input" type="number" v-model="pixelHeight"></div>
+            <div class="ElementContent"><input class="input" type="number" v-model="pixelHeight" @blur="refreshImg" @keyup.enter="refreshImg"></div>
           </div>
 
 
 
           <div class="ElementBox">
             <div class="ElementBoxTitle">宽度</div>
-            <div class="ElementContent"><input class="input" type="number" v-model="pixelWidth"></div>
+            <div class="ElementContent"><input class="input" type="number" v-model="pixelWidth" @blur="refreshImg" @keyup.enter="refreshImg"></div>
           </div>
 
           <div class="ElementBox">
             <div class="ElementBoxTitle">每行最大像素宽：（建议不超过30）</div>
-            <div class="ElementContent"> <input class="input" type="number" v-model="maxPixelWidth"></div>
+            <div class="ElementContent"> <input class="input" type="number" v-model="maxPixelWidth" @blur="refreshImg" @keyup.enter="refreshImg"></div>
           </div>
         </div>
       </div>
       <div class="block" style="  overflow-y: scroll;flex: 1;">
         <Title :title="'分段输出'"></Title>
         <div class="outputContainer" v-for="(line, index) in pixels" :key="index">
-          <CopyBox title='我是标题' :content="line"></CopyBox>
+          <CopyBox :title="`第${Math.floor(index/getLineContainPart)+1}行 第${index%getLineContainPart+1}部分`" :content="line"></CopyBox>
         </div>
       </div>
       <!-- <pre class="output">
@@ -72,7 +71,7 @@
 import logo from '@/assets/7.png'  // @ = src/
 const imgSrc = logo
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import CopyBox from './components/CopyBox.vue'
 import { Toaster } from 'vue-sonner'
 import 'vue-sonner/style.css'
@@ -90,6 +89,9 @@ function selectFile() {
   fileInput.value.click()
 }
 
+const getLineContainPart = computed(()=> Math.floor((pixelWidth.value - 1) / maxPixelWidth.value) + 1);
+
+const imgFile = ref(null)        // 缓存 File 或 Image
 function onFileChange(e) {
   const file = e.target.files[0]
   if (!file) return
@@ -97,9 +99,18 @@ function onFileChange(e) {
   imgUrl.value = URL.createObjectURL(file)
 
   const img = new Image()
-  img.onload = () => drawToPixelCanvas(img)
+  img.onload = () => {
+    imgFile.value = img;
+    drawToPixelCanvas(img)
+  }
   img.src = imgUrl.value
   e.target.value = ''
+}
+
+function refreshImg() {
+ if (imgFile.value) {
+    drawToPixelCanvas(imgFile.value)
+  }
 }
 
 function drawToPixelCanvas(img) {
