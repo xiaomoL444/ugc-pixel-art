@@ -1,0 +1,64 @@
+/* 清除所有默认 margin/padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'MyFont';
+  /* 自定义字体名称 */
+  src: url('@/assets/zh-cn_2.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* body 默认字体、宽度、行高 */
+body {
+  width: 100%;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  font-family: 'MyFont', sans-serif;
+  /* 使用字体 */
+}
+
+.ElementBox {
+  border: 2px solid #887BD7;
+  /* 边框颜色和宽度 */
+  border-radius: 10px;
+  /* 圆角半径 */
+  padding: 1rem;
+}
+
+.ElementBoxTitle {
+  font-size: large;
+}
+
+.ElementContent {
+  word-wrap: break-word;
+  /* 老方法 */
+  overflow-wrap: break-word;
+  /* 新方法 */
+
+  border-radius: 10px;
+  border: 1px solid #CDCDCD;
+
+  padding: 10px;
+  margin-top: 1rem;
+
+  font-size: 0.8rem;
+
+  display: flex;
+}
+
+.input {
+  border: none;
+  /* 去掉所有边框 */
+  border-bottom: 1px solid #3335;
+  /* 只保留下边线 */
+  outline: none;
+  /* 去掉点击时的蓝框 */
+  padding: 6px 0;
+  flex: 1;
+  font-size: 16px;
+}
